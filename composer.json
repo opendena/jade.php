@@ -24,10 +24,5 @@
   },
   "autoload": {
     "psr-0": { "Jade": "src/" }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "master"
-    }
   }
 }
