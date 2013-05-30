@@ -1,33 +1,40 @@
 <?php
 
+namespace PHPUnit;
+
 use Jade\Jade;
-use Jade\Node;
 use Jade\Dumper;
 use Jade\Lexer;
 use Jade\Parser;
 
-
-class JadeTest extends \PHPUnit_Framework_TestCase {
-
+class JadeTest extends \PHPUnit_Framework_TestCase
+{
     protected $jade;
 
-    public function __construct() {
+    public function __construct()
+    {
         $parser = new Parser(new Lexer());
         $dumper = new Dumper();
 
         $this->jade = new Jade($parser, $dumper);
     }
 
-    protected function parse($value) {
+    protected function parse($value)
+    {
         return $this->jade->render($value);
     }
 
-    public function testDoctypes() {
-        $this->assertEquals('<?xml version="1.0" encoding="utf-8" ?>' , $this->parse('!!! xml'));
-        $this->assertEquals('<!DOCTYPE html>' , $this->parse('!!! 5'));
+    public function testDoctypes()
+    {
+        $this->assertEquals(
+            '<?xml version="1.0" encoding="utf-8" ?>',
+            $this->parse('!!! xml')
+        );
+        $this->assertEquals('<!DOCTYPE html>', $this->parse('!!! 5'));
     }
 
-    public function testLineEndings() {
+    public function testLineEndings()
+    {
         $tags = array('p', 'div', 'img');
         $html = implode("\n", array('<p></p>', '<div></div>', '<img />'));
 
@@ -36,21 +43,29 @@ class JadeTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($html, $this->parse(implode("\n", $tags)));
     }
 
-    public function testSingleQuotes() {
+    public function testSingleQuotes()
+    {
         $this->assertEquals("<p>'foo'</p>", $this->parse("p 'foo'"));
-        $this->assertEquals("<p>\n  'foo'\n</p>", $this->parse("p\n  | 'foo'"));
-        $this->assertEquals(<<<HTML
+        $this->assertEquals(
+            "<p>\n  'foo'\n</p>",
+            $this->parse("p\n  | 'foo'")
+        );
+        $this->assertEquals(
+<<<HTML
 <?php \$path = 'foo' ?>
-<a href="/<?php echo Jade\Dumper::_text(\\$path) ?>"></a>
+<a href="/<?php echo Jade\Dumper::_text(\$path) ?>"></a>
 HTML
-, $this->parse(<<<Jade
+,
+            $this->parse(
+<<<Jade
 - \$path = 'foo'
 a(href='/#{path}')
 Jade
-));
+            ));
     }
 
-    public function testTags() {
+    public function testTags()
+    {
         $str = implode("\n", array('p', 'div', 'img'));
         $html = implode("\n", array('<p></p>', '<div></div>', '<img />'));
 
@@ -89,7 +104,8 @@ Jade
     }
 
 
-    public function testVariableLengthNewlines() {
+    public function testVariableLengthNewlines()
+    {
         $jade = <<<Jade
 ul
   li a
@@ -120,7 +136,8 @@ HTML;
         $this->assertEquals($html, $this->parse($jade));
     }
 
-    public function testNewlines() {
+    public function testNewlines()
+    {
         $jade = <<<Jade
 ul
   li a
@@ -170,30 +187,35 @@ HTML;
         $this->assertEquals($html, $this->parse($jade));
     }
 
-    public function testTagText() {
+    public function testTagText()
+    {
         $this->assertEquals('some random text', $this->parse('| some random text'));
         $this->assertEquals('<p>some random text</p>', $this->parse('p some random text'));
     }
 
-    public function testTagTextBlock() {
+    public function testTagTextBlock()
+    {
         $this->assertEquals("<p>\n  foo\n     bar\n   baz\n</p>", $this->parse("p\n  | foo\n  |    bar\n  |  baz"));
         $this->assertEquals("<label>\n  Password:\n  <input />\n</label>", $this->parse("label\n  | Password:\n  input"));
     }
 
-    public function testTagTextCodeInsertion() {
+    public function testTagTextCodeInsertion()
+    {
         $this->assertEquals('yo, <?php echo $jade ?> is cool', $this->parse('| yo, <?php echo $jade ?> is cool'));
         $this->assertEquals('<p>yo, <?php echo $jade ?> is cool</p>', $this->parse('p yo, <?php echo $jade ?> is cool'));
         $this->assertEquals('<p>yo, <?php echo $jade || $jade ?> is cool</p>', $this->parse('p yo, <?php echo $jade || $jade ?> is cool'));
         $this->assertEquals('yo, <?php echo $jade || $jade ?> is cool', $this->parse('| yo, <?php echo $jade || $jade ?> is cool'));
     }
 
-    public function testHtml5Mode() {
+    public function testHtml5Mode()
+    {
         $this->assertEquals("<!DOCTYPE html>\n<input type=\"checkbox\" checked=\"checked\" />", $this->parse("!!! 5\ninput(type=\"checkbox\", checked)"));
 //        $this->assertEquals("<!DOCTYPE html>\n<input type=\"checkbox\" checked=\"checked\" />", $this->parse("!!! 5\ninput(type=\"checkbox\", checked: true)"));
 //        $this->assertEquals("<!DOCTYPE html>\n<input type=\"checkbox\" />", $this->parse("!!! 5\ninput(type=\"checkbox\", checked: false)"));
     }
 
-    public function testAttrs() {
+    public function testAttrs()
+    {
         $this->assertEquals('<img src="&lt;script&gt;" />', $this->parse('img(src="<script>")'), 'Test attr escaping');
 //        $this->assertEquals('<a data-attr="bar"></a>', $this->parse('a(data-attr:"bar")'));
 //        $this->assertEquals('<a data-attr="bar" data-attr-2="baz"></a>', $this->parse('a(data-attr:"bar", data-attr-2:"baz")'));
@@ -252,24 +274,28 @@ HTML;
 //        );
     }
 
-    public function testCodeAttrs() {
-		/*
+    public function testCodeAttrs()
+    {
+        /*
         $this->assertEquals('<p id="<?php echo $name ?>"></p>', $this->parse('p(id: {{$name}})'));
         $this->assertEquals('<p id="<?php echo \'name \' . $name . " =)" ?>"></p>', $this->parse('p(id: {{\'name \' . $name . " =)"}})'));
         $this->assertEquals('<p foo="<?php echo $name || "<default />" ?>"></p>', $this->parse('p(foo: {{$name || "<default />"}})'));
         $this->assertEquals('<p id="<?php echo \'name \' . $name . " =)" ?>">Hello, (bracket =) )</p>', $this->parse('p(id: {{\'name \' . $name . " =)"}}) Hello, (bracket =) )'));
-		*/
+        */
     }
 
-    public function testCode() {
+    public function testCode()
+    {
     }
 
-    public function test18NStringInAttrs() {
+    public function test18NStringInAttrs()
+    {
         $this->assertEquals('<input type="text" value="Search" />', $this->parse('input( type="text", value="Search" )'));
         $this->assertEquals('<input type="текст" value="Поиск" />', $this->parse('input( type="текст", value="Поиск" )'));
     }
 
-    public function testHTMLComments() {
+    public function testHTMLComments()
+    {
         $jade = <<<Jade
 // just some paragraphs
 p foo
@@ -301,7 +327,8 @@ HTML;
         $this->assertEquals($html, $this->parse($jade));
     }
 
-    public function testHTMLConditionalComments() {
+    public function testHTMLConditionalComments()
+    {
         $jade = <<<Jade
 body
   //if IE

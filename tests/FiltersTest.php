@@ -1,29 +1,37 @@
 <?php
 
+namespace PHPUnit;
+
 use Jade\Jade;
 use Jade\Parser;
 use Jade\Lexer;
 use Jade\Dumper;
 
-class FiltersTest extends \PHPUnit_Framework_TestCase {
-
+class FiltersTest extends \PHPUnit_Framework_TestCase
+{
     protected $jade;
 
-    public function __construct() {
+    public function __construct()
+    {
         $parser = new Parser(new Lexer());
         $dumper = new Dumper();
 
         $this->jade = new Jade($parser, $dumper);
     }
 
-    protected function parse($value) {
+    protected function parse($value)
+    {
         return $this->jade->render($value);
     }
 
-    public function testFilterCodeInsertion() {
+    public function testFilterCodeInsertion()
+    {
         $this->assertEquals(
-            "<script type=\"text/javascript\">\n  var name = \"<?php echo \$name ?>\";\n</script>",
-            $this->parse(<<<Jade
+            "<script type=\"text/javascript\">\n".
+            "var name = \"<?php echo \$name ?>\";\n".
+            "</script>",
+            $this->parse(
+<<<Jade
 :javascript
   | var name = "{{\$name}}";
 Jade
@@ -31,10 +39,12 @@ Jade
         );
     }
 
-    public function testCDATAFilter() {
+    public function testCDATAFilter()
+    {
         $this->assertEquals(
             "<![CDATA[\n  foo\n]]>",
-            $this->parse(<<<Jade
+            $this->parse(
+<<<Jade
 :cdata
   | foo
 Jade
@@ -42,7 +52,8 @@ Jade
         );
         $this->assertEquals(
             "<![CDATA[\n  foo\n   bar\n]]>",
-            $this->parse(<<<Jade
+            $this->parse(
+<<<Jade
 :cdata
   | foo
   |  bar
@@ -51,7 +62,8 @@ Jade
         );
         $this->assertEquals(
             "<![CDATA[\n  foo\n  bar\n]]>\n<p>something else</p>",
-            $this->parse(<<<Jade
+            $this->parse(
+<<<Jade
 :cdata
   | foo
   | bar
@@ -61,10 +73,12 @@ Jade
         );
     }
 
-    public function testJavaScriptFilter() {
+    public function testJavaScriptFilter()
+    {
         $this->assertEquals(
             "<script type=\"text/javascript\">\n  alert('foo')\n</script>",
-            $this->parse(<<<Jade
+            $this->parse(
+<<<Jade
 :javascript
   | alert('foo')
 Jade
@@ -72,10 +86,16 @@ Jade
         );
     }
 
-    public function testCSSFilter() {
+    public function testCSSFilter()
+    {
         $this->assertEquals(
-            "<style type=\"text/css\">\n  body {\n    color:#000;\n  }\n</style>",
-            $this->parse(<<<Jade
+            "<style type=\"text/css\">\n".
+            "  body {\n".
+            "    color:#000;\n".
+            "  }\n".
+            "</style>",
+            $this->parse(
+<<<Jade
 :css
   | body {
   |   color:#000;
@@ -85,7 +105,8 @@ Jade
         );
         $this->assertEquals(
             "<style type=\"text/css\">\n  body {color:#000;}\n</style>",
-            $this->parse(<<<Jade
+            $this->parse(
+<<<Jade
 :css
   | body {color:#000;}
 Jade
@@ -156,10 +177,12 @@ HTML;
         $this->assertEquals($html, $this->parse($jade));
     }
 
-    public function testPHPFilter() {
+    public function testPHPFilter()
+    {
         $this->assertEquals(
             "<?php\n  \$bar = 10;\n  \$bar++;\n  echo \$bar;\n?>",
-            $this->parse(<<<Jade
+            $this->parse(
+<<<Jade
 :php
   | \$bar = 10;
   | \$bar++;
