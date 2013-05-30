@@ -1,8 +1,9 @@
 <?php
 
-use lib\Parser;
-use lib\Lexer;
-use lib\Dumper;
+use Jade\Jade;
+use Jade\Parser;
+use Jade\Lexer;
+use Jade\Dumper;
 
 class FiltersTest extends \PHPUnit_Framework_TestCase {
 
