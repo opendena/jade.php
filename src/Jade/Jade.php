@@ -25,12 +25,12 @@ class Jade {
     }
 
     public function cache($input) {
-        if ( !is_dir($this->cache) ) {
+        if (!is_dir($this->cache) ) {
             throw new \Exception('You must provide correct cache path to Jade for caching.');
         }
-        if ( !is_file($input) ) {
+        if (!is_file($input) ) {
             throw new \InvalidArgumentException('Only file templates can be cached.');
-        } 
+        }
 
         $cacheKey = basename($input, '.jade');
         $path = $this->cache . '/' . $cacheKey . '.php';
@@ -40,11 +40,11 @@ class Jade {
 			$cacheTime = filemtime($path);
 		}
 
-        if ( $cacheTime && filemtime($input) < $cacheTime ) {
+        if ($cacheTime && filemtime($input) < $cacheTime ) {
             return $path;
         }
 
-        if ( !is_writable($this->cache) ) {
+        if (!is_writable($this->cache) ) {
             throw new \Exception(sprintf('Cache directory must be writable. "%s" is not.', $this->cache));
         }
 
