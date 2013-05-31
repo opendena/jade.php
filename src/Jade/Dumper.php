@@ -6,6 +6,7 @@ class Dumper
 {
     protected $doctypes = array(
         '5'             => '<!DOCTYPE html>',
+        'html'          => '<!DOCTYPE html>',
         'xml'           => '<?xml version="1.0" encoding="utf-8" ?>',
         'default'       => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
         'transitional'  => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
