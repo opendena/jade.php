@@ -2,8 +2,8 @@
 
 namespace Jade;
 
-class Dumper {
-
+class Dumper
+{
     protected $doctypes = array(
         '5'             => '<!DOCTYPE html>',
         'xml'           => '<?xml version="1.0" encoding="utf-8" ?>',
@@ -28,61 +28,68 @@ class Dumper {
         "/^ *switch[ \(]+.*\: *$/"    => 'endswitch',
         "/^ *case *.* *\: *$/"        => 'break'
     );
-	
+
     protected $specialAttribtues = array('selected', 'checked', 'required', 'disabled');
 
     protected $nextIsIf = array();
 
-    public static function _text($bytes) {
+    public static function _text($bytes)
+    {
         $patterns = array('/&(?!\w+;)/', '/</', '/>/');
         $replacements = array('&amp;', '&lt;', '&gt;');
+
         return preg_replace($patterns, $replacements, $bytes);
     }
 
-    public static function _html($bytes) {
+    public static function _html($bytes)
+    {
         return $bytes;
     }
 
     /**
      * Dump node to string.
      *
-     * @param   BlockNode   $node   root node
+     * @param BlockNode $node root node
      *
-     * @return  string
+     * @return string
      */
-    public function dump(Node $node) {
+    public function dump(Node $node)
+    {
         return $this->dumpNode($node);
     }
 
     /**
      * Dump node to string.
      *
-     * @param   Node    $node   node to dump
-     * @param   integer $level  indentation level
+     * @param Node    $node  node to dump
+     * @param integer $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpNode(Node $node, $level = 0) {
-//        $dumper = 'dump' . basename(str_replace('\\', '/', get_class($node)), 'Node');
-		$dumper = 'dump' .$node->type;
+    protected function dumpNode(Node $node, $level = 0)
+    {
+        // $dumper = 'dump' . basename(str_replace('\\', '/', get_class($node)), 'Node');
+        $dumper = 'dump' .$node->type;
+
         return $this->$dumper($node, $level);
     }
 
     /**
      * Dump block node to string.
      *
-     * @param   BlockNode   $node   block node
-     * @param   integer     $level  indentation level
+     * @param BlockNode $node  block node
+     * @param integer   $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpBlock(Node $node, $level = 0) {
+    protected function dumpBlock(Node $node, $level = 0)
+    {
         $html = '';
         $last = '';
 
         $children = $node->children;
-        foreach ( $children as $i => $child ) {
-            if ( !empty($html) && !empty($last) ) {
+        foreach ($children as $i => $child) {
+            if (!empty($html) && !empty($last)) {
                 $html .= "\n";
             }
 
@@ -97,13 +104,14 @@ class Dumper {
     /**
      * Dump doctype node.
      *
-     * @param   DoctypeNode $node   doctype node
-     * @param   integer     $level  indentation level
+     * @param DoctypeNode $node  doctype node
+     * @param integer     $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpDoctype(Node $node, $level = 0) {
-        if ( !isset($this->doctypes[$node->version]) ) {
+    protected function dumpDoctype(Node $node, $level = 0)
+    {
+        if (!isset($this->doctypes[$node->version])) {
             throw new \Exception(sprintf('Unknown doctype %s', $node->version));
         }
 
@@ -113,39 +121,41 @@ class Dumper {
     /**
      * Dump tag node.
      *
-     * @param   TagNode $node   tag node
-     * @param   integer $level  indentation level
+     * @param TagNode $node  tag node
+     * @param integer $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpTag(Node $node, $level = 0) {
+    protected function dumpTag(Node $node, $level = 0)
+    {
         $html = str_repeat('  ', $level);
 
-        if ( in_array($node->name, $this->selfClosing) ) {
-			$html .= sprintf('<%s%s />', $node->name, $this->dumpAttributes($node->attributes));
-			return $html;
-        } else {
-			$html .= sprintf('<%s%s>', $node->name, $this->dumpAttributes($node->attributes));
+        if (in_array($node->name, $this->selfClosing)) {
+            $html .= sprintf('<%s%s />', $node->name, $this->dumpAttributes($node->attributes));
 
-            if ( $node->code ) {
-                if ( count($node->children) ) {
+            return $html;
+        } else {
+            $html .= sprintf('<%s%s>', $node->name, $this->dumpAttributes($node->attributes));
+
+            if ($node->code) {
+                if (count($node->children)) {
                     $html .= "\n" . str_repeat('  ', $level + 1) . $this->dumpCode($node->code);
                 } else {
                     $html .= $this->dumpCode($node->code);
                 }
             }
-            if ( $node->text && count($node->text->lines) ) {
-                if ( count($node->children) ) {
+            if ($node->text && count($node->text->lines)) {
+                if (count($node->children)) {
                     $html .= "\n" . str_repeat('  ', $level + 1) . $this->dumpText($node->text);
                 } else {
                     $html .= $this->dumpText($node->text);
                 }
             }
 
-            if ( count($node->children) ) {
+            if (count($node->children)) {
                 $html .= "\n";
                 $children = $node->children;
-                foreach ( $children as $i => $child ) {
+                foreach ($children as $i => $child) {
                     $this->nextIsIf[$level + 1] = isset($children[$i + 1]) && ($children[$i + 1] instanceof Node);
                     $html .= $this->dumpNode($child, $level + 1);
                 }
@@ -159,12 +169,13 @@ class Dumper {
     /**
      * Dump text node.
      *
-     * @param   TextNode    $node   text node
-     * @param   integer     $level  indentation level
+     * @param TextNode $node  text node
+     * @param integer  $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpText(Node $node, $level = 0) {
+    protected function dumpText(Node $node, $level = 0)
+    {
         $indent = str_repeat('  ', $level);
 
         return $indent . $this->replaceHolders(implode("\n" . $indent, $node->lines), 'text');
@@ -173,28 +184,29 @@ class Dumper {
     /**
      * Dump comment node.
      *
-     * @param   Node $node   comment node
-     * @param   integer     $level  indentation level
+     * @param Node    $node  comment node
+     * @param integer $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpComment(Node $node, $level = 0) {
-        if ( $node->buffering ) {
+    protected function dumpComment(Node $node, $level = 0)
+    {
+        if ($node->buffering) {
             $html = str_repeat('  ', $level);
 
-            if ( $node->block ) {
+            if ($node->block) {
                 $string = $node->getString();
                 $beg    = "<!--\n";
                 $end    = "\n" . str_repeat('  ', $level) . '-->';
 
-                if ( preg_match('/^ *if/', $string) ) {
+                if (preg_match('/^ *if/', $string)) {
                     $beg = '<!--[' . $string . "]>\n";
                     $end = "\n" . str_repeat('  ', $level) . '<![endif]-->';
                     $string = '';
                 }
 
                 $html .= $beg;
-                if ( $string !== '' ) {
+                if ($string !== '') {
                     $html .= str_repeat('  ', $level + 1) . $string . "\n";
                 }
                 $html .= $this->dumpBlock($node->block, $level + 1);
@@ -212,30 +224,30 @@ class Dumper {
     /**
      * Dump code node.
      *
-     * @param   CodeNode    $node   code node
-     * @param   integer     $level  indentation level
+     * @param CodeNode $node  code node
+     * @param integer  $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpCode(Node $node, $level = 0) {
+    protected function dumpCode(Node $node, $level = 0)
+    {
         $html = str_repeat('  ', $level);
 
-		$map = array('='=>'Jade\Dumper::_text', '!='=>'Jade\Dumper::_html');
+        $map = array('='=>'Jade\Dumper::_text', '!='=>'Jade\Dumper::_html');
 
-
-        if ( $node->block ) {
-            if ( $node->buffering ) {
+        if ($node->block) {
+            if ($node->buffering) {
                 $begin = '<?php echo '.$map[$node->codeType].'($' . trim(preg_replace('/^ +/', '', $node->code)) . ") { ?>\n";
             } else {
                 $begin = '<?php ' . preg_replace('/^ +/', '', $node->code) . " { ?>\n";
             }
             $end = "\n" . str_repeat('  ', $level) . '<?php } ?>';
 
-            foreach ( $this->codes as $regex => $ending ) {
-                if ( preg_match($regex, $node->code) ) {
+            foreach ($this->codes as $regex => $ending) {
+                if (preg_match($regex, $node->code)) {
                     $begin  = '<?php ' . preg_replace('/^ +| +$/', '', $node->code) . " ?>\n";
                     $end    = "\n" . str_repeat('  ', $level) . '<?php ' . $ending . '; ?>';
-                    if ( $ending === 'endif' && isset($this->nextIsIf[$level]) && $this->nextIsIf[$level] ) {
+                    if ($ending === 'endif' && isset($this->nextIsIf[$level]) && $this->nextIsIf[$level]) {
                         $end = '';
                     }
                     break;
@@ -246,7 +258,7 @@ class Dumper {
             $html .= $this->dumpNode($node->block, $level + 1);
             $html .= $end;
         } else {
-            if ( $node->buffering ) {
+            if ($node->buffering) {
                 $html .= '<?php echo '.$map[$node->codeType].'(' . preg_replace('/^ +/', '', $node->code) . ') ?>';
             } else {
                 $html .= '<?php ' . preg_replace('/^ +/', '', $node->code) . ' ?>';
@@ -259,17 +271,18 @@ class Dumper {
     /**
      * Dump filter node.
      *
-     * @param   FilterNode  $node   filter node
-     * @param   integer     $level  indentation level
+     * @param FilterNode $node  filter node
+     * @param integer    $level indentation level
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpFilter(Node $node, $level = 0) {
+    protected function dumpFilter(Node $node, $level = 0)
+    {
         $text = '';
-        if ( $node->block ) {
+        if ($node->block) {
             $text = $this->dumpNode($node->block, $level + 1);
         }
-        switch ( ltrim($node->name, ':') ) {
+        switch (ltrim($node->name, ':')) {
             case 'css':
                 $opening_tag = '<style type="text/css">';
                 $closing_tag = '</style>';
@@ -300,21 +313,22 @@ class Dumper {
     /**
      * Dump attributes.
      *
-     * @param   array   $attributes attributes associative array
+     * @param array $attributes attributes associative array
      *
-     * @return  string
+     * @return string
      */
-    protected function dumpAttributes(array $attributes) {
+    protected function dumpAttributes(array $attributes)
+    {
         $items = array();
 
-        foreach ( $attributes as $key => $value ) {
-            if ( is_array($value) ) {
+        foreach ($attributes as $key => $value) {
+            if (is_array($value)) {
                 $items[] = $key . '="' . trim($this->replaceHolders(implode(' ', $value), 'attribute', $key)) . '"';
-            } elseif ( $value === true ) {
+            } elseif ($value === true) {
                 $items[] = $key . '="' . trim($key) . '"';
             } elseif (in_array($key, $this->specialAttribtues) && preg_match('/^[a-zA-Z0-9_][a-zA-Z0-9_>]*$/', $value)) {
                 $items[] = trim($this->replaceHolders($value, 'attribute', $key));
-            } elseif ( $value !== false ) {
+            } elseif ($value !== false) {
                 $items[] = $key . '="' . trim($this->replaceHolders($value, 'attribute', $key)) . '"';
             }
         }
@@ -322,33 +336,46 @@ class Dumper {
         return count($items) ? ' ' . implode(' ', $items) : '';
     }
 
-    protected function replaceHolders($string, $type = 'none', $key = '') {
-		//fixes replacement bugs and changes syntax as like jade original
-		if ($type == 'attribute') {
-			if (preg_match('/^[a-zA-Z0-9_][a-zA-Z0-9_>]*$/', $string)) {
-				if (in_array($key, $this->specialAttribtues)) {
-					return sprintf('<?php if ($%s) echo "%s=\'".Jade\Dumper::_text($%s)."\'"; ?>', $string, $key, $string);
-				}
-				return sprintf('<?php echo Jade\Dumper::_text($%s); ?>', $string);
-			}
-			$string = trim($string, '\'\"');
-			if ($key === 'class') {
-				$string = str_replace('.', '', $string);
-			}
-			if ($key === 'id' && strpos($string, '#{') === false) {
-				$string = str_replace('#', '', $string);
-			}
-			// If it doesn't look like php we can run it through dump_text
-			if ( strpos($string, '(') === false && strpos($string, ')') === false && strpos($string, '::') === false && strpos($string, '->') === false){
-				$string = self::_text($string);
-			}
-		}
-        $string = preg_replace_callback('/([!#]){([^}]+)}/', function($matches) {
-			$map = array('#'=>'Jade\Dumper::_text', '!'=>'Jade\Dumper::_html');
-			return sprintf('<?php echo %s(%s); ?>', $map[$matches[1]], $matches[2]);
-        }, $string);
-		
-		return $string;
+    protected function replaceHolders($string, $type = 'none', $key = '')
+    {
+        //fixes replacement bugs and changes syntax as like jade original
+        if ($type == 'attribute') {
+            if (preg_match('/^[a-zA-Z0-9_][a-zA-Z0-9_>]*$/', $string)) {
+                if (in_array($key, $this->specialAttribtues)) {
+                    return sprintf('<?php if ($%s) echo "%s=\'".Jade\Dumper::_text($%s)."\'"; ?>', $string, $key, $string);
+                }
+
+                return sprintf('<?php echo Jade\Dumper::_text($%s); ?>', $string);
+            }
+            $string = trim($string, '\'\"');
+            if ($key === 'class') {
+                $string = str_replace('.', '', $string);
+            }
+            if ($key === 'id' && strpos($string, '#{') === false) {
+                $string = str_replace('#', '', $string);
+            }
+            // If it doesn't look like php we can run it through dump_text
+            if (strpos($string, '(') === false && strpos($string, ')') === false && strpos($string, '::') === false && strpos($string, '->') === false) {
+                $string = self::_text($string);
+            }
+        }
+        $string = preg_replace_callback(
+            '/([!#]){([^}]+)}/',
+            function ($matches) {
+                $map = array(
+                    '#'=>'Jade\Dumper::_text',
+                    '!'=>'Jade\Dumper::_html'
+                );
+
+                return sprintf(
+                    '<?php echo %s(%s); ?>',
+                    $map[$matches[1]],
+                    $matches[2]
+                );
+            },
+            $string
+        );
+
+        return $string;
     }
 }
-?>
