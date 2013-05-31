@@ -32,7 +32,12 @@ class Jade extends atoum
             ->isEqualTo($this->parse('!!! xml'));
 
         $this->string('<!DOCTYPE html>')
-            ->isEqualTo($this->parse('!!! 5'));
+            ->isEqualTo($this->parse('!!! 5'))
+            ->isEqualTo($this->parse('doctype html'))
+            ->isEqualTo($this->parse('!!! html'));
+
+        $this->string('<html></html>')
+            ->isEqualTo($this->parse('html'));
     }
 
     public function testLineEndings()
@@ -54,6 +59,15 @@ class Jade extends atoum
             ->isEqualTo($this->parse("p\n  | 'foo'"));
     }
 
+    public function testBlockExpansion()
+    {
+        // @todo https://github.com/visionmedia/jade/blob/master/test/jade.test.js#L102
+        // $this->string(
+        //    '<li><a>foo</a></li><li><a>bar</a></li><li><a>baz</a></li>'
+        //)
+        //    ->isEqualTo($this->parse("li: a foo\nli: a bar\nli: a baz"));
+    }
+
     public function testTags()
     {
         $str = implode("\n", array('p', 'div', 'img'));
@@ -61,7 +75,19 @@ class Jade extends atoum
 
         $this->string($html)
             ->isEqualTo($this->parse($str));
+        $this->string('<fb:foo-bar></fb:foo-bar>')
+            ->isEqualTo($this->parse('fb:foo-bar'));
+        $this->string('<div class="something"></div>')
+            ->isEqualTo($this->parse('div.something'));
+        $this->string('<div id="something"></div>')
+            ->isEqualTo($this->parse('div#something'));
         $this->string('<div id="item" class="something"></div>')
             ->isEqualTo($this->parse('div#item.something'));
+        $this->string('<div id="foo" class="bar"></div>')
+            ->isEqualTo($this->parse('#foo.bar'))
+        //    ->isEqualTo($this->parse('.bar#foo'))
+            ->isEqualTo($this->parse('div#foo(class="bar")'))
+            ->isEqualTo($this->parse('div(class="bar")#foo'));
+        //    ->isEqualTo($this->parse('div(id="bar").foo'))
     }
 }
