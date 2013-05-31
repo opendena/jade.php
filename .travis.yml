@@ -5,4 +5,4 @@ php:
     - 5.4
 
 script:
-    - bin/atoum -d tests
+    - ./vendor/atoum/atoum/bin/atoum -d tests
