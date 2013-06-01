@@ -36,14 +36,20 @@ class Jade extends atoum
             ->isEqualTo($this->parse('doctype html'))
             ->isEqualTo($this->parse('!!! html'));
 
+        //$this->string('<!DOCTYPE foo bar baz>')
+        //    ->isEqualTo($this->parse('doctype foo bar baz'));
+
         $this->string('<html></html>')
             ->isEqualTo($this->parse('html'));
+
+        //$this->string('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN>')
+        //    ->isEqualTo($this->parse('doctype html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN'));
     }
 
     public function testLineEndings()
     {
         $tags = array('p', 'div', 'img');
-        $html = implode("\n", array('<p></p>', '<div></div>', '<img />'));
+        $html = implode("", array('<p></p>', '<div></div>', '<img/>'));
 
         $this->string($html)
             ->isEqualTo($this->parse(implode("\r\n", $tags)))
@@ -54,8 +60,7 @@ class Jade extends atoum
     public function testSingleQuotes()
     {
         $this->string("<p>'foo'</p>")
-            ->isEqualTo($this->parse("p 'foo'"));
-        $this->string("<p>\n  'foo'\n</p>")
+            ->isEqualTo($this->parse("p 'foo'"))
             ->isEqualTo($this->parse("p\n  | 'foo'"));
     }
 
@@ -66,12 +71,16 @@ class Jade extends atoum
         //    '<li><a>foo</a></li><li><a>bar</a></li><li><a>baz</a></li>'
         //)
         //    ->isEqualTo($this->parse("li: a foo\nli: a bar\nli: a baz"));
+        //$this->string("<li class=\"first\"><a>foo</a></li><li><a>bar</a></li><li><a>baz</a></li>")
+        //    ->isEqualTo($this->parse("li.first: a foo\nli: a bar\nli: a baz"));
+        //$this->string('<div class="foo"><div class="bar">baz</div></div>')
+        //    ->isEqualTo($this->parse(".foo: .bar baz"));
     }
 
     public function testTags()
     {
         $str = implode("\n", array('p', 'div', 'img'));
-        $html = implode("\n", array('<p></p>', '<div></div>', '<img />'));
+        $html = implode("", array('<p></p>', '<div></div>', '<img/>'));
 
         $this->string($html)
             ->isEqualTo($this->parse($str));
@@ -265,5 +274,195 @@ class Jade extends atoum
             ->isEqualTo($this->parse('p(foo="bar") (parens)'));
         // $this->string('<option value="">-- (optional) foo --</option>')
         //    ->isEqualTo($this->parse('option(value="") -- (optional) foo --'));
+    }
+
+    public function testTagTextBlock()
+    {
+        /*
+        $this->string('<p>foo \nbar \nbaz</p>')
+            ->isEqualTo($this->parse('p\n  | foo \n  | bar \n  | baz'));
+        $this->string('<label>Password:<input/></label>')
+            ->isEqualTo($this->parse('label\n  | Password:\n  input'));
+        $this->string('<label>Password:<input/></label>')
+            ->isEqualTo($this->parse('label Password:\n  input'));
+        */
+    }
+
+    public function testTagTextInterpolation()
+    {
+        /*
+        $this->string('yo, jade is cool')
+            ->isEqualTo($this->parse('| yo, #{name} is cool\n'));
+        $this->string('<p>yo, jade is cool</p>')
+            ->isEqualTo($this->parse('p yo, #{name} is cool'));
+        $this->string('yo, jade is cool')
+            ->isEqualTo($this->parse('| yo, #{name || "jade"} is cool'));
+        $this->string('yo, \'jade\' is cool')
+            ->isEqualTo($this->parse('| yo, #{name || "\'jade\'"} is cool'));
+        $this->string('foo &lt;script&gt; bar')
+            ->isEqualTo($this->parse('| foo #{code} bar'));
+        $this->string('foo <script> bar')
+            ->isEqualTo($this->parse('| foo !{code} bar'));
+        */
+    }
+
+    public function testFlexibleIdentation()
+    {
+        /*
+        $this->string('<html><body><h1>Wahoo</h1><p>test</p></body></html>')
+            ->isEqualTo($this->parse('html\n  body\n   h1 Wahoo\n   p test'));
+        */
+    }
+
+    public function testInterpolationValues()
+    {
+
+        /*
+        $this->string('<p>Users: <?php echo Jade\Dumper::_text($value); ?></p>')
+            ->isEqualTo($this->parse('p Users: #{15}'));
+        $this->string('<p>Users: </p>')
+            ->isEqualTo($this->parse('p Users: #{null}'));
+        $this->string('<p>Users: </p>')
+            ->isEqualTo($this->parse('p Users: #{undefined}'));
+        $this->string('<p>Users: none</p>')
+            ->isEqualTo($this->parse('p Users: #{undefined || "none"}'));
+        $this->string('<p>Users: 0</p>')
+            ->isEqualTo($this->parse('p Users: #{0}'));
+        $this->string('<p>Users: false</p>')
+            ->isEqualTo($this->parse('p Users: #{false}'));
+        */
+    }
+
+    public function testHtml5Mode()
+    {
+        //$this->string('<!DOCTYPE html><input type="checkbox" checked>')
+        //    ->isEqualTo($this->parse('!!! 5\ninput(type="checkbox", checked)'));
+        //$this->string('<!DOCTYPE html><input type="checkbox" checked>')
+        //    ->isEqualTo($this->parse('!!! 5\ninput(type="checkbox", checked=true)'));
+        //$this->string('<!DOCTYPE html><input type="checkbox">')
+        //    ->isEqualTo($this->parse('!!! 5\ninput(type="checkbox", checked= false)'));
+    }
+
+    public function testMultiLineAttributes()
+    {
+        //$this->string('<a foo="bar" bar="baz" checked="checked">foo</a>')
+        //    ->isEqualTo($this->parse('a(foo="bar"\n  bar="baz"\n  checked) foo'));
+        //$this->string('<a foo="bar" bar="baz" checked="checked">foo</a>')
+        //    ->isEqualTo($this->parse('a(foo="bar"\nbar="baz"\nchecked) foo'));
+        //$this->string('<a foo="bar" bar="baz" checked="checked">foo</a>')
+        //    ->isEqualTo($this->parse('a(foo="bar"\n,bar="baz"\n,checked) foo'));
+        //$this->string('<a foo="bar" bar="baz" checked="checked">foo</a>')
+        //    ->isEqualTo($this->parse('a(foo="bar",\nbar="baz",\nchecked) foo'));
+    }
+
+    public function testAttributes()
+    {
+        //$this->string('<img src="&lt;script&gt;"/>')
+        //    ->isEqualTo($this->parse('img(src="<script>")'), 'Test attr escaping');
+
+        $this->string('<a data-attr="bar"></a>')
+            ->isEqualTo($this->parse('a(data-attr="bar")'));
+        $this->string('<a data-attr="bar" data-attr-2="baz"></a>')
+            ->isEqualTo($this->parse('a(data-attr="bar", data-attr-2="baz")'));
+
+        $this->string('<a title="foo,bar"></a>')
+            ->isEqualTo($this->parse('a(title= "foo,bar")'));
+        $this->string('<a title="foo,bar" href="#"></a>')
+            ->isEqualTo($this->parse('a(title= "foo,bar", href="#")'));
+
+        $this->string('<p class="foo"></p>')
+            ->isEqualTo($this->parse("p(class='foo')"), 'Test single quoted attrs');
+        //$this->string('<input type="checkbox" checked="checked"/>')
+        //    ->isEqualTo($this->parse('input( type="checkbox", checked )'));
+        //$this->string('<input type="checkbox" checked="checked"/>')
+        //    ->isEqualTo($this->parse('input( type="checkbox", checked = true )'));
+        //$this->string('<input type="checkbox"/>')
+        //    ->isEqualTo($this->parse('input(type="checkbox", checked= false)'));
+        //$this->string('<input type="checkbox"/>')
+        //    ->isEqualTo($this->parse('input(type="checkbox", checked= null)'));
+        //$this->string('<input type="checkbox"/>')
+        //    ->isEqualTo($this->parse('input(type="checkbox", checked= undefined)'));
+
+        $this->string('<img src="/foo.png"/>')
+            ->isEqualTo($this->parse('img(src="/foo.png")'));
+        $this->string('<img src="/foo.png"/>')
+            ->isEqualTo($this->parse('img(src  =  "/foo.png")'), 'Test attr = whitespace');
+        $this->string('<img src="/foo.png"/>')
+            ->isEqualTo($this->parse('img(src="/foo.png")'), 'Test attr :');
+        $this->string('<img src="/foo.png"/>')
+            ->isEqualTo($this->parse('img(src  =  "/foo.png")'), 'Test attr : whitespace');
+
+        $this->string('<img src="/foo.png" alt="just some foo"/>')
+            ->isEqualTo($this->parse('img(src="/foo.png", alt="just some foo")'));
+        $this->string('<img src="/foo.png" alt="just some foo"/>')
+            ->isEqualTo($this->parse('img(src = "/foo.png", alt = "just some foo")'));
+
+        $this->string('<p class="foo,bar,baz"></p>')
+            ->isEqualTo($this->parse('p(class="foo,bar,baz")'));
+        $this->string('<a href="http://google.com" title="Some : weird = title"></a>')
+            ->isEqualTo($this->parse('a(href= "http://google.com", title= "Some : weird = title")'));
+        $this->string('<label for="name"></label>')
+            ->isEqualTo($this->parse('label(for="name")'));
+        $this->string('<meta name="viewport" content="width=device-width"/>')
+            ->isEqualTo($this->parse("meta(name= 'viewport', content='width=device-width')"), 'Test attrs that contain attr separators');
+        $this->string('<div style="color= white"></div>')
+            ->isEqualTo($this->parse("div(style='color= white')"));
+        $this->string('<div style="color: white"></div>')
+            ->isEqualTo($this->parse("div(style='color: white')"));
+        //$this->string('<p class="foo"></p>')
+        //    ->isEqualTo($this->parse("p('class'='foo')"));
+        //$this->string('<p class="foo"></p>')
+        //    ->isEqualTo($this->parse("p(\"class\"= 'foo')"), 'Test keys with double quotes');
+
+        $this->string('<p data-lang="en"></p>')
+            ->isEqualTo($this->parse('p(data-lang = "en")'));
+        //$this->string('<p data-dynamic="true"></p>')
+        //    ->isEqualTo($this->parse('p("data-dynamic"= "true")'));
+        //$this->string('<p data-dynamic="true" class="name"></p>')
+        //    ->isEqualTo($this->parse('p("class"= "name", "data-dynamic"= "true")'));
+        //$this->string('<p data-dynamic="true"></p>')
+        //    ->isEqualTo($this->parse('p(\'data-dynamic\'= "true")'));
+        //$this->string('<p data-dynamic="true" class="name"></p>')
+        //    ->isEqualTo($this->parse('p(\'class\'= "name", \'data-dynamic\'= "true")'));
+        //$this->string('<p data-dynamic="true" yay="yay" class="name"></p>')
+        //    ->isEqualTo($this->parse('p(\'class\'= "name", \'data-dynamic\'= "true", yay)'));
+
+        $this->string('<input checked="checked" type="checkbox"/>')
+            ->isEqualTo($this->parse('input(checked, type="checkbox")'));
+
+        $this->string('<a data-foo="{ foo: \'bar\', bar= \'baz\' }"></a>')
+            ->isEqualTo($this->parse('a(data-foo  = "{ foo: \'bar\', bar= \'baz\' }")'));
+
+        $this->string('<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>')
+            ->isEqualTo($this->parse('meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")'));
+
+        $this->string('<div style="background: url(/images/test.png)">Foo</div>')
+            ->isEqualTo($this->parse("div(style= 'background: url(/images/test.png)') Foo"));
+        $this->string('<div style="background = url(/images/test.png)">Foo</div>')
+            ->isEqualTo($this->parse("div(style= 'background = url(/images/test.png)') Foo"));
+        //$this->string('<div style="foo">Foo</div>')
+        //    ->isEqualTo($this->parse("div(style= ['foo', 'bar'][0]) Foo"));
+        //$this->string('<div style="bar">Foo</div>')
+        //    ->isEqualTo($this->parse("div(style= { foo: 'bar', baz: 'raz' }['foo']) Foo"));
+        //$this->string('<a href="def">Foo</a>')
+        //    ->isEqualTo($this->parse("a(href='abcdefg'.substr(3,3)) Foo"));
+        //$this->string('<a href="def">Foo</a>')
+        //    ->isEqualTo($this->parse("a(href={test: 'abcdefg'}.test.substr(3,3)) Foo"));
+        //$this->string('<a href="def">Foo</a>')
+        //    ->isEqualTo($this->parse("a(href={test: 'abcdefg'}.test.substr(3,[0,3][1])) Foo"));
+
+        $this->string('<rss xmlns:atom="atom"></rss>')
+            ->isEqualTo($this->parse("rss(xmlns:atom=\"atom\")"));
+        //$this->string('<rss xmlns:atom="atom"></rss>')
+        //    ->isEqualTo($this->parse("rss('xmlns:atom'=\"atom\")"));
+        //$this->string('<rss xmlns:atom="atom"></rss>')
+        //    ->isEqualTo($this->parse("rss(\"xmlns:atom\"='atom')"));
+        //$this->string('<rss xmlns:atom="atom" foo="bar"></rss>')
+        //    ->isEqualTo($this->parse("rss('xmlns:atom'=\"atom\", 'foo'= 'bar')"));
+        //$this->string('<a data-obj="{ foo: \'bar\' }"></a>')
+        //    ->isEqualTo($this->parse("a(data-obj= \"{ foo: 'bar' }\")"));
+
+        //$this->string('<meta content="what\'s up? \'weee\'"/>')
+        //    ->isEqualTo($this->parse('meta(content="what\'s up? \'weee\'")'));
     }
 }

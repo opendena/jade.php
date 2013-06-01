@@ -90,9 +90,9 @@ class Dumper
 
         $children = $node->children;
         foreach ($children as $i => $child) {
-            if (!empty($html) && !empty($last)) {
-                $html .= "\n";
-            }
+            // if (!empty($html) && !empty($last)) {
+            //    $html .= "\n";
+            //}
 
             $this->nextIsIf[$level] = isset($children[$i + 1]) && ($children[$i + 1] instanceof Node);
             $last  = $this->dumpNode($child, $level);
@@ -129,38 +129,38 @@ class Dumper
      */
     protected function dumpTag(Node $node, $level = 0)
     {
-        $html = str_repeat('  ', $level);
-
+        // $html = str_repeat('  ', $level);
+        $html = '';
         if (in_array($node->name, $this->selfClosing)) {
-            $html .= sprintf('<%s%s />', $node->name, $this->dumpAttributes($node->attributes));
+            $html .= sprintf('<%s%s/>', $node->name, $this->dumpAttributes($node->attributes));
 
             return $html;
         } else {
             $html .= sprintf('<%s%s>', $node->name, $this->dumpAttributes($node->attributes));
 
             if ($node->code) {
-                if (count($node->children)) {
-                    $html .= "\n" . str_repeat('  ', $level + 1) . $this->dumpCode($node->code);
-                } else {
+                //if (count($node->children)) {
+                    // $html .= "\n" . str_repeat('  ', $level + 1) . $this->dumpCode($node->code);
+                // } else {
                     $html .= $this->dumpCode($node->code);
-                }
+                //}
             }
             if ($node->text && count($node->text->lines)) {
-                if (count($node->children)) {
-                    $html .= "\n" . str_repeat('  ', $level + 1) . $this->dumpText($node->text);
-                } else {
+                //if (count($node->children)) {
+                    // $html .= "\n" . str_repeat('  ', $level + 1) . $this->dumpText($node->text);
+                //} else {
                     $html .= $this->dumpText($node->text);
-                }
+                //}
             }
 
             if (count($node->children)) {
-                $html .= "\n";
+                // $html .= "\n";
                 $children = $node->children;
                 foreach ($children as $i => $child) {
                     $this->nextIsIf[$level + 1] = isset($children[$i + 1]) && ($children[$i + 1] instanceof Node);
                     $html .= $this->dumpNode($child, $level + 1);
                 }
-                $html .= "\n" . str_repeat('  ', $level);
+                // $html .= "\n" . str_repeat('  ', $level);
             }
 
             return $html.sprintf('</%s>', $node->name);
@@ -177,9 +177,9 @@ class Dumper
      */
     protected function dumpText(Node $node, $level = 0)
     {
-        $indent = str_repeat('  ', $level);
+        // $indent = str_repeat('  ', $level);
 
-        return $indent . $this->replaceHolders(implode("\n" . $indent, $node->lines), 'text');
+        return $this->replaceHolders(implode("\n", $node->lines), 'text');
     }
 
     /**
@@ -232,7 +232,7 @@ class Dumper
      */
     protected function dumpCode(Node $node, $level = 0)
     {
-        $html = str_repeat('  ', $level);
+        // $html = str_repeat('  ', $level);
 
         $map = array('='=>'Jade\Dumper::_text', '!='=>'Jade\Dumper::_html');
 
@@ -242,12 +242,14 @@ class Dumper
             } else {
                 $begin = '<?php ' . preg_replace('/^ +/', '', $node->code) . " { ?>\n";
             }
-            $end = "\n" . str_repeat('  ', $level) . '<?php } ?>';
+            // $end = "\n" . str_repeat('  ', $level) . '<?php } ';
+            $end = '<?php } ?>';
 
             foreach ($this->codes as $regex => $ending) {
                 if (preg_match($regex, $node->code)) {
                     $begin  = '<?php ' . preg_replace('/^ +| +$/', '', $node->code) . " ?>\n";
-                    $end    = "\n" . str_repeat('  ', $level) . '<?php ' . $ending . '; ?>';
+                    // $end    = "\n" . str_repeat('  ', $level) . '<?php ' . $ending . '; ';
+                    $end = '<?php '.$ending.';?>';
                     if ($ending === 'endif' && isset($this->nextIsIf[$level]) && $this->nextIsIf[$level]) {
                         $end = '';
                     }
@@ -302,11 +304,12 @@ class Dumper
                 break;
         }
 
-        $indent = str_repeat('  ', $level);
+        // $indent = str_repeat('  ', $level);
 
-        $html  = $indent . $opening_tag . "\n";
-        $html .= $text . "\n";
-        $html .= $indent . $closing_tag;
+        // $html  = $indent . $opening_tag . "\n";
+        // $html .= $text . "\n";
+        $html .= $text;
+        // $html .= $indent . $closing_tag;
 
         return $html;
     }
