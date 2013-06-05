@@ -368,12 +368,12 @@ class Dumper
             '/([!#]){([^}]+)}/',
             function ($matches) {
                 $map = array(
-                    '#'=>'Jade\Dumper::_text($',
-                    '!'=>'Jade\Dumper::_html('
+                    '#'=>'Jade\Dumper::_text',
+                    '!'=>'Jade\Dumper::_html'
                 );
 
                 return sprintf(
-                    '<?php echo %s%s); ?>',
+                    '<?php echo %s(%s); ?>',
                     $map[$matches[1]],
                     $matches[2]
                 );
