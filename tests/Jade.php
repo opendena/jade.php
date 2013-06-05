@@ -316,21 +316,18 @@ class Jade extends atoum
 
     public function testInterpolationValues()
     {
-        /*
         $this->string('<p>Users: <?php echo Jade\Dumper::_text(15); ?></p>')
             ->isEqualTo($this->parse('p Users: #{15}'));
-        $this->string('<p>Users: </p>')
-            ->isEqualTo($this->parse('p Users: #{null}'));
-        $this->string('<p>Users: </p>')
-            ->isEqualTo($this->parse('p Users: #{undefined}'));
-        $this->string('<p>Users: none</p>')
-            ->isEqualTo($this->parse('p Users: #{undefined || "none"}'));
-        $this->string('<p>Users: 0</p>')
+        //$this->string('<p>Users: </p>')
+        //    ->isEqualTo($this->parse('p Users: #{null}'));
+        //$this->string('<p>Users: </p>')
+        //    ->isEqualTo($this->parse('p Users: #{undefined}'));
+        //$this->string('<p>Users: none</p>')
+        //    ->isEqualTo($this->parse('p Users: #{undefined || "none"}'));
+        $this->string('<p>Users: <?php echo Jade\Dumper::_text(0); ?></p>')
             ->isEqualTo($this->parse('p Users: #{0}'));
-        $this->string('<p>Users: false</p>')
+        $this->string('<p>Users: <?php echo Jade\Dumper::_text(false); ?></p>')
             ->isEqualTo($this->parse('p Users: #{false}'));
-        */
-
     }
 
     public function testHtml5Mode()
@@ -464,5 +461,13 @@ class Jade extends atoum
 
         //$this->string('<meta content="what\'s up? \'weee\'"/>')
         //    ->isEqualTo($this->parse('meta(content="what\'s up? \'weee\'")'));
+    }
+
+
+    public function testPhpVar()
+    {
+        $str = 'foo bar baz';
+        $this->string('<?php echo Jade\Dumper::_text($var); ?>')
+            ->isEqualTo($this->parse('#{$var}'));
     }
 }
