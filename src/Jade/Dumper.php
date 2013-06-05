@@ -233,6 +233,7 @@ class Dumper
     protected function dumpCode(Node $node, $level = 0)
     {
         // $html = str_repeat('  ', $level);
+        $html = '';
 
         $map = array('='=>'Jade\Dumper::_text', '!='=>'Jade\Dumper::_html');
 
