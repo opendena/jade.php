@@ -316,9 +316,8 @@ class Jade extends atoum
 
     public function testInterpolationValues()
     {
-
         /*
-        $this->string('<p>Users: <?php echo Jade\Dumper::_text($value); ?></p>')
+        $this->string('<p>Users: <?php echo Jade\Dumper::_text(15); ?></p>')
             ->isEqualTo($this->parse('p Users: #{15}'));
         $this->string('<p>Users: </p>')
             ->isEqualTo($this->parse('p Users: #{null}'));
@@ -331,6 +330,7 @@ class Jade extends atoum
         $this->string('<p>Users: false</p>')
             ->isEqualTo($this->parse('p Users: #{false}'));
         */
+
     }
 
     public function testHtml5Mode()
