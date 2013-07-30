@@ -2,12 +2,12 @@
 <?php
 
 // Load readme.md template
-$readme = file_get_contents(__DIR__ . '/README.md');
+$readme = file_get_contents(__DIR__ . '/README.template.md');
 
 // Creating simple tags
 $readme = fillReadme($readme, 'creating-simple-tags');
 
-echo $readme;
+file_put_contents(__DIR__ . '/../README.md', $readme);
 
 function fillReadme(&$file, $example)
 {
