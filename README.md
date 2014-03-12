@@ -1,6 +1,14 @@
 # Jade.php [![Build Status](https://travis-ci.org/opendena/jade.php.png?branch=master)](https://travis-ci.org/opendena/jade.php)
 
+
 Jade.php adds inline PHP scripting support to the [Jade](http://jade-lang.com) template compiler.
+
+## No more maintenance
+
+Sorry, but we lack of time to maintaining this project.
+
+Please contact us if you want to have the **ownership** of this project on **github/composer**.
+
 ## Installation
 We strongly recommand to use composer
 `````javascript
